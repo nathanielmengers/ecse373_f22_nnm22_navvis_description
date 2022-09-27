@@ -20,9 +20,6 @@ Gazebo.
 - gazebo_plugins (if using the XACRO file to load the robot geometry)
 - velodyne_description (if loading the XACRO file to load the robot geometry)
 
-## Install Instructions
-Assuming 
-
 ## Usage Instructions
 
 To load the geometry with the URDF file and visualize the the robot with the joint state publisher gui, 
