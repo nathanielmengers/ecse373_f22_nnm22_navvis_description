@@ -20,6 +20,20 @@ Gazebo.
 - gazebo_plugins (if using the XACRO file to load the robot geometry)
 - velodyne_description (if loading the XACRO file to load the robot geometry)
 
+## Installation Instructions
+Assuming Ubuntu 20.04 and ROS Noetic have been installed, run the following code in the terminal:
+
+
+> source /opt/ros/noetic/setup.bash
+> mkdir catkin_ws
+> cd catkin_ws
+> catkin_make
+> cd src
+
+The package can be downloaded as a .zip file and extracted into the src folder. Alternatively, clone the repository from github:
+
+> git clone https://github.com/nathanielmengers/ecse373_f22_nnm22_navvis_description.git
+
 ## Usage Instructions
 
 To load the geometry with the URDF file and visualize the the robot with the joint state publisher gui, 
