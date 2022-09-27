@@ -1,0 +1,143 @@
+<?xml version = "1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="navvis">
+	<link name = "base">
+		<visual>
+		    <origin xyz = "0.0 0.0 0.96" rpy="0.0 0.0 0.0"/>	
+			<geometry>
+				<box size = "0.45 0.78 1.92"/>
+			</geometry>
+		</visual>
+		<collision>
+		    <origin xyz = "0.0 0.0 0.96" rpy="0.0 0.0 0.0"/>
+			<geometry>
+				<box size = "0.45 0.78 1.92"/>
+			</geometry>
+		</collision>
+	</link>
+	
+<!--	
+	<link name = "base_laser_vert_top_right">
+		<visual>
+			<geometry>
+				<box size = "0.062 0.062 0.087"/>
+			</geometry>
+		</visual>
+		<collision>
+			<geometry>
+				<box size =  "0.062 0.062 0.087"/>
+			</geometry>
+		</collision>
+	</link>
+
+	<link name = "base_laser_vert_top_left">
+		<visual>
+			<geometry>
+				<box size = "0.062 0.062 0.087"/>
+			</geometry>
+		</visual>
+		<collision>
+			<geometry>
+				<box size =  "0.062 0.062 0.087"/>
+			</geometry>
+		</collision>
+	</link>
+-->	
+    <link name = "base_wheel_center">
+	    <visual>
+		    <geometry>
+                <cylinder radius = "0.15" length = "0.05"/>
+		    </geometry>
+	    </visual>
+	    <collision>
+		    <geometry>
+                <cylinder radius = "0.15" length = "0.05"/>
+		    </geometry>
+	    </collision>
+    </link>
+	    
+    <joint name = "base_wheel_center_joint" type = "continuous">
+        <parent link = "base"/>
+        <child link = "base_wheel_center"/>
+        <origin xyz="0.10 0.0 -0.05" rpy = "-1.570796325 0.0 0.0"/>	
+        <axis xyz="0 0 1"/>
+        <limit effort="1e6" velocity = "1e6"/> 
+    </joint>
+<!--
+	<joint name = "base_laser_vert_top_right_joint" type = "fixed">
+	    <parent link = "base"/>
+	    <child link = "base_laser_vert_top_right"/>
+	    <origin xyz = "0.2978 -0.1450 1.8451" rpy = "-1.1760 0.6313 -1.9377"/>	
+    </joint>
+    
+	<joint name = "base_laser_vert_top_left_joint" type = "fixed">
+	    <parent link = "base"/>
+	    <child link = "base_laser_vert_top_left"/>
+	    <origin xyz = "0.2997 0.1531 1.8443" rpy = "1.1780 0.6198 1.9560"/>	
+    </joint>
+-->  
+ 
+    <!-- Include the XACRO file that defines a Hokuyo LIDAR. -->
+    <xacro:include filename="$(find velodyne_description)/urdf/VLP-16.urdf.xacro"/>
+
+
+    <!-- MAKE LASER_HORIZ -->
+    <xacro:VLP-16 parent="base" name="laser_horiz" topic="laser_horiz/packets" hz="10"
+        samples="440" gpu="false">
+        <origin xyz="0.2325416305773505 -0.0001380069427607134 1.920122926231907"
+        rpy="-0.0012068 0.114646 -0.0015308" />
+    </xacro:VLP-16>
+    
+	<!-- Include the XACRO file that defines a Hokuyo LIDAR. -->
+    <xacro:include filename="$(find
+        gazebo_plugins)/test/multi_robot_scenario/xacro/laser/hokuyo.xacro" />
+
+    <!--MAKE LASER VERT BOTTOM-->
+    <xacro:laser name="laser_vert_bottom" parent="base" xyz="0.3157894464801903
+        -0.002068548615034871 0.5099999434059285" rpy="3.1354753 -1.3045001 0.0024658"
+        meshes="package://gazebo_plugins/test/multi_robot_scenario/meshes/laser" />
+
+    <!--MAKE LASER VERT TOP LEFT-->
+    <xacro:laser name="laser_vert_top_left" parent="base" xyz="0.2997 0.1531 1.8443" 
+        rpy="1.1780 0.6198 1.9560"
+        meshes="package://gazebo_plugins/test/multi_robot_scenario/meshes/laser" />
+
+    <!--MAKE LASER VERT TOP RIGHT-->
+    <xacro:laser name="laser_vert_top_right" parent="base" xyz="0.2978 -0.1450 1.8451" 
+        rpy="-1.1760 0.6313 -1.9377"
+        meshes="package://gazebo_plugins/test/multi_robot_scenario/meshes/laser" />
+
+    <!-- LEFT AND RIGHT WHEEL MACRO -->    
+    <xacro:macro name = "make_wheel" params = "side reflect">
+	    
+	    <link name = "base_wheel_${side}">
+		    <visual>
+			    <geometry>
+                    <cylinder radius = "0.2" length = "0.05"/>
+			    </geometry>
+		    </visual>
+		    <collision>
+			    <geometry>
+                    <cylinder radius = "0.2" length = "0.05"/>
+			    </geometry>
+		    </collision>
+	    </link>
+	    
+        <joint name = "base_wheel_${side}" type = "continuous">
+	        <parent link = "base"/>
+	        <child link = "base_wheel_${side}"/>
+	        <origin xyz="-0.10 ${reflect * 0.4} 0.0" rpy = "-1.570796325 0.0 0.0"/>
+	        <axis xyz="0 0 1"/>	
+	        <limit effort="1e6" velocity = "1e6"/>
+        </joint>
+	    
+    </xacro:macro>	
+    
+    <!-- MAKE LEFT AND RIGHT WHEELS -->
+    <xacro:make_wheel side = "left" reflect = "1" />
+    <xacro:make_wheel side ="right" reflect="-1" />
+    
+    
+</robot>
+
+	

@@ -1,0 +1,35 @@
+<launch>
+
+<!-- Create an argument to determine whether to use a XACRO or URDF file. -->
+<arg name="use_xacro" default="false" />
+
+<!-- The filename can be passed into the launch file to override the default. -->
+<arg if="$(arg use_xacro)" name="filename" default="robot_description.xacro" />
+<arg unless="$(arg use_xacro)" name="filename" default="urdf_from_xacro.urdf" />
+
+<!-- The full path of the URDF or XACRO file can be passed into the launch file instead -->
+<arg name="file" default="$(find navvis_description)/urdf/$(arg filename)" />
+
+<!-- Use the file argument as the name of the file used to set the /robot_description parameter on the parameter server -->
+<param if="$(arg use_xacro)" name="robot_description" command="$(find xacro)/xacro --inorder $(arg file)" />
+<param unless="$(arg use_xacro)" name="robot_description" textfile="$(arg file)" />
+
+<!-- Run the robot_state_publisher. -->
+<node pkg="robot_state_publisher" type = "robot_state_publisher" name="robot_state_publisher" />
+
+<!-- Run the join_state_publisher.-->
+
+
+<arg name="use_gui" default="true" />
+<arg if="$(arg use_gui)" name="jsp" default="joint_state_publisher_gui" />
+<arg unless="$(arg use_gui)" name="jsp" default="joint_state_publisher"/>
+<node pkg="$(arg jsp)" type = "$(arg jsp)" name="$(arg jsp)" />
+
+<node pkg="tf2_ros" type="static_transform_publisher" name="left_wheel" args="0.0 0.365 0.2 -1.57 0.0 0.0 base wheel_left_joint"/>
+<node pkg="tf2_ros" type="static_transform_publisher" name="right_wheel" args="0.0 -0.365 0.2 -1.57 0.0 0.0 base wheel_right_joint"/>
+<node pkg="tf2_ros" type="static_transform_publisher" name="center_wheel" args="0.0 -0.365 0.2 -1.57 0.0 0.0 base wheel_center_joint"/>
+
+<!--Run RVIZ with a configuration file. If RVIZ is closed, close everything. -->
+<node pkg="rviz" type="rviz" name="rviz" args="-d $(find navvis_description)/config/config.rviz" required="true" />
+
+</launch>
