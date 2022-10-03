@@ -1,35 +1,48 @@
 <launch>
 
-<!-- Create an argument to determine whether to use a XACRO or URDF file. -->
-<arg name="use_xacro" default="false" />
+    <!-- Create an argument to determine whether to use a XACRO or URDF file. -->
+    <arg name = "use_xacro" default = "false" />
 
-<!-- The filename can be passed into the launch file to override the default. -->
-<arg if="$(arg use_xacro)" name="filename" default="robot_description.xacro" />
-<arg unless="$(arg use_xacro)" name="filename" default="urdf_from_xacro.urdf" />
+    <!-- The filename can be passed into the launch file to override the default. -->
+    <arg if = "$(arg use_xacro)" name = "filename" default = "robot_description.xacro" />
+    <arg unless = "$(arg use_xacro)" name = "filename" default = "urdf_from_xacro.urdf" />    
 
-<!-- The full path of the URDF or XACRO file can be passed into the launch file instead -->
-<arg name="file" default="$(find navvis_description)/urdf/$(arg filename)" />
+    <!-- The full path of the URDF or XACRO file can be passed into the launch file instead -->
+    <arg name = "file" default = "$(find navvis_description)/urdf/$(arg filename)" />
+    
 
-<!-- Use the file argument as the name of the file used to set the /robot_description parameter on the parameter server -->
-<param if="$(arg use_xacro)" name="robot_description" command="$(find xacro)/xacro --inorder $(arg file)" />
-<param unless="$(arg use_xacro)" name="robot_description" textfile="$(arg file)" />
+    <!-- Use the file argument as the name of the file used to set the /robot_description parameter on the parameter server -->
 
-<!-- Run the robot_state_publisher. -->
-<node pkg="robot_state_publisher" type = "robot_state_publisher" name="robot_state_publisher" />
+    <param if = "$(arg use_xacro)" name="robot_description" command="$(find xacro)/xacro --inorder $(arg file)" />
+    <param unless = "$(arg use_xacro)" name="robot_description" textfile="$(arg file)" />    
+ 
+    <!-- Launch the robot state publisher (optional) -->
+    <arg name = "use_robot_state_publisher" default = "true"/>
+    
+    <!-- Run the joint_state_publisher or joint_state_publisher_gui-->
+    <arg name = "use_gui" default="true" />
+    <arg if = "$(arg use_gui)" name="jsp" default="joint_state_publisher_gui" />
+    <arg unless = "$(arg use_gui)" name="jsp" default="joint_state_publisher"/>
+    <node pkg = "$(arg jsp)" type = "$(arg jsp)" name="$(arg jsp)" />
 
-<!-- Run the join_state_publisher.-->
+
+    <group if = "$(arg use_robot_state_publisher)">
+        <node pkg="robot_state_publisher"  type = "robot_state_publisher"  name="robot_state_publisher"/>      
+    </group>
+
+    <group unless="$(arg use_robot_state_publisher)" >
+        <node pkg="tf2_ros" type="static_transform_publisher" name="left_wheel" args="0.0 0.365 0.2 -1.57 0.0 0.0 base wheel_left_joint"/>
+        <node pkg="tf2_ros" type="static_transform_publisher" name="right_wheel" args="0.0 -0.365 0.2 -1.57 0.0 0.0 base wheel_right_joint"/>
+        <node pkg="tf2_ros" type="static_transform_publisher" name="center_wheel" args="0.0 -0.365 0.2 -1.57 0.0 0.0 base wheel_center_joint"/>      
+    </group>
+    
 
 
-<arg name="use_gui" default="true" />
-<arg if="$(arg use_gui)" name="jsp" default="joint_state_publisher_gui" />
-<arg unless="$(arg use_gui)" name="jsp" default="joint_state_publisher"/>
-<node pkg="$(arg jsp)" type = "$(arg jsp)" name="$(arg jsp)" />
 
-<node pkg="tf2_ros" type="static_transform_publisher" name="left_wheel" args="0.0 0.365 0.2 -1.57 0.0 0.0 base wheel_left_joint"/>
-<node pkg="tf2_ros" type="static_transform_publisher" name="right_wheel" args="0.0 -0.365 0.2 -1.57 0.0 0.0 base wheel_right_joint"/>
-<node pkg="tf2_ros" type="static_transform_publisher" name="center_wheel" args="0.0 -0.365 0.2 -1.57 0.0 0.0 base wheel_center_joint"/>
-
-<!--Run RVIZ with a configuration file. If RVIZ is closed, close everything. -->
-<node pkg="rviz" type="rviz" name="rviz" args="-d $(find navvis_description)/config/config.rviz" required="true" />
+    <!--Run RVIZ with a configuration file. If RVIZ is closed, close everything. -->
+    <arg name = "config_filename" default = "config.rviz" />
+    <arg name = "config_file" default = "$(find navvis_description)/config/$(arg config_filename)"/>
+    <node pkg="rviz" type="rviz" name="rviz" args = "-d $(arg config_file)" required="true" />
 
 </launch>
+

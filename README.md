@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 
+=======
+>>>>>>> Added support for lab 3 robot and RVIZ configurations
 # Navvis Description Package 
 
 ## Description
