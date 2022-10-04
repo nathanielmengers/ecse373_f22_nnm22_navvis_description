@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-
-=======
->>>>>>> Added support for lab 3 robot and RVIZ configurations
 # Navvis Description Package 
 
 ## Description
@@ -43,7 +39,7 @@ To load the geometry with the provided urdf_from_xacro.urdf file and visualize t
 
 > roslaunch navvis_description display.launch 
 
-Optional Arguments
+### Optional Arguments
 
 - use_xacro: Defaults to false. Specify use_xacro to true if loading robot geometry from an XACRO file. Leave as false if using a URDF file.
 > roslaunch navvis_description display.launch use_xacro:=true
@@ -63,16 +59,15 @@ Optional Arguments
 - use_gui: True by default. This allows the user to specify the joint angle of the wheels using the joint_state_publisher_gui. Setting to false executes joint_state_publisher instead. 
 >roslaunch navvis_description display.launch use_gui:=false
 
-
 - config_filename: Default configuration file is config.rviz in the contained config folder. The default shows only the robot with no sensing or map. The included config_with_lasers.rviz displays LIDAR data from three sensors on the robot. The included config_with_lasers_and_map.rviz additionally shows a 2D mapo of the environment. Note that users must provide their own map and LIDAR data. These are not included with the navvis_description package.
 
-- config_file: Defaults to <package_path>/config/config.rviz. As with the geometry file, users may specify a configuration file in any other filder. 
+- config_file: Defaults to <package_path>/config/config.rviz. As with the geometry file, users may specify a configuration file in any other folder. 
 
 >roslaunch navvis_description display.launch config_file:=<file_location/file_name.rviz>
 
 
 
-# Author
+## Author
 Nathan Mengers
 
 
